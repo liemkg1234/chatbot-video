@@ -34,12 +34,15 @@ dependency:
     uv export --only-group rag-ui -o app/rag/rag-ui/requirements.txt
 
 
-# LLM
-stop-llm:
-    docker-compose --profile llm -p llm-lab -f docker/docker-compose.yml down
+download-ai:
+    curl -L -o docker/volumes/ai/huggingface/SmolVLM2-2.2B-Instruct.Q4_K_M.gguf https://huggingface.co/mradermacher/SmolVLM2-2.2B-Instruct-GGUF/resolve/main/SmolVLM2-2.2B-Instruct.Q4_K_M.gguf
 
-start-llm: stop-llm
-    docker-compose --profile llm -p llm-lab -f docker/docker-compose.yml up -d
+# AI
+stop-ai:
+    docker-compose -p ai -f docker/docker-compose-ai.yml down
+
+start-ai: stop-ai
+    docker-compose -p ai -f docker/docker-compose-ai.yml up -d
 
 # Agent
 stop-agent:
@@ -57,7 +60,7 @@ start-rag: stop-rag
 
 # MCP
 stop-mcp:
-    docker-compose -p mcp-lab -f docker/docker-compose-mcp.yml down
+    docker-compose -p mcp -f docker/docker-compose-mcp.yml down
 
 start-mcp: stop-mcp
-    docker-compose -p mcp-lab -f docker/docker-compose-mcp.yml up -d
+    docker-compose -p mcp -f docker/docker-compose-mcp.yml up -d
