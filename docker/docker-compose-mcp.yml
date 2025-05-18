@@ -3,14 +3,15 @@ services:
   mcp-yt-dlp:
     build: mcp
     container_name: mcp-yt-dlp
-    environment:
-      - NPM_CONFIG_STRICT_SSL=false
+    ports:
+      - "9000:8000"
+    command: "--pass-environment --sse-port=8000 --sse-host 0.0.0.0 npx @kevinwatt/yt-dlp-mcp"
     volumes:
       - ./volumes/mcp/temp:/temp
     restart: unless-stopped
     networks:
       - chatbot-video
-#
+
 #  # Custom build MCP with FastAPI-MCP
 #  mcp-weather:
 #    build: ../app/mcp/weather
@@ -20,8 +21,6 @@ services:
 #    restart: unless-stopped
 #    networks:
 #      - llm-lab
-
-
 
 # === Network ===
 networks:
