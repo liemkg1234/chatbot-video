@@ -4,8 +4,10 @@
 
 
 ---
-## Demo
 ## 📽 Demo
+
+Click the image below to watch the demo video:
+
 [![Demo Video](images/demo.png)](https://youtu.be/d9r8VSMw26g)
 
 ---
