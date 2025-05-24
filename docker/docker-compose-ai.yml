@@ -39,8 +39,8 @@ services:
   asr:
     image: fedirz/faster-whisper-server:latest-cuda
     container_name: asr
-    ports:
-      - "8001:8000"
+#    ports:
+#      - "8001:8000"
     volumes:
       - ./volumes/asr:/root/.cache/huggingface
       - ./volumes/temp:/temp
@@ -119,8 +119,8 @@ services:
   yt-dlp-server:
     build: ../app/yt-dlp-server/
     container_name: yt-dlp-server
-    ports:
-      - "9000:8000"
+#    ports:
+#      - "9000:8000"
     volumes:
       - ./volumes/temp:/temp
     restart: unless-stopped
