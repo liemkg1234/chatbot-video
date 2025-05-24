@@ -74,19 +74,15 @@ graph TD
 sudo apt install just
 ```
 
-### 📦 Install Dependencies & Download Models
-
-```bash
-just dependency
-just download-model
-```
-
-### ▶️ Run the App
+### ▶️ Start App
 
 ```bash
 just start
 
 # Waiting for model downloading...
+
+# Check
+curl -X GET http://localhost:8000/health
 ```
 
 ### Test

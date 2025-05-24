@@ -30,8 +30,6 @@ dependency:
 # Download model
 download-model:
     sudo mkdir docker/volumes/models
-    wget -O https://huggingface.co/Qwen/Qwen3-8B-GGUF/resolve/main/Qwen3-8B-Q4_K_M.gguf docker/volumes/models/Qwen3-8B-Q4_K_M.gguf
-
     wget -O https://huggingface.co/ggml-org/InternVL3-8B-Instruct-GGUF/resolve/main/InternVL3-8B-Instruct-Q4_K_M.gguf docker/volumes/models/InternVL3-8B-Instruct-Q4_K_M.gguf
 
 # LLM
