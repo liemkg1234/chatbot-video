@@ -25,42 +25,18 @@ fmt:
 # Server
 dependency:
     # Agents
-    uv export --only-group agents -o app/agents/requirements.txt
+    uv export --only-group vlm -o app/vlm/requirements.txt
 
-    # MCP
-    uv export --only-group mcp-rag -o app/mcp/rag/requirements.txt
+# Download model
+download-model:
+    sudo mkdir docker/volumes/models
+    wget -O https://huggingface.co/Qwen/Qwen3-8B-GGUF/resolve/main/Qwen3-8B-Q4_K_M.gguf docker/volumes/models/Qwen3-8B-Q4_K_M.gguf
 
-    # RAG
-    uv export --only-group rag-ui -o app/rag/rag-ui/requirements.txt
+    wget -O https://huggingface.co/ggml-org/InternVL3-8B-Instruct-GGUF/resolve/main/InternVL3-8B-Instruct-Q4_K_M.gguf docker/volumes/models/InternVL3-8B-Instruct-Q4_K_M.gguf
 
+# LLM
+stop:
+    docker-compose -p chat-video -f docker/docker-compose-ai.yml down
 
-download-ai:
-    curl -L -o docker/volumes/ai/huggingface/SmolVLM2-2.2B-Instruct.Q4_K_M.gguf https://huggingface.co/mradermacher/SmolVLM2-2.2B-Instruct-GGUF/resolve/main/SmolVLM2-2.2B-Instruct.Q4_K_M.gguf
-
-# AI
-stop-ai:
-    docker-compose -p ai -f docker/docker-compose-ai.yml down
-
-start-ai: stop-ai
-    docker-compose -p ai -f docker/docker-compose-ai.yml up -d
-
-# Agent
-stop-agent:
-    docker-compose --profile agent -p agent-lab -f docker/docker-compose.yml down
-
-start-agent: stop-agent
-    docker-compose --profile agent -p agent-lab -f docker/docker-compose.yml up -d
-
-# RAG
-stop-rag:
-    docker-compose --profile rag -p rag-lab -f docker/docker-compose.yml down
-
-start-rag: stop-rag
-    docker-compose --profile rag -p rag-lab -f docker/docker-compose.yml up -d
-
-# MCP
-stop-mcp:
-    docker-compose -p mcp -f docker/docker-compose-mcp.yml down
-
-start-mcp: stop-mcp
-    docker-compose -p mcp -f docker/docker-compose-mcp.yml up -d
+start: stop
+    docker-compose -p chat-video -f docker/docker-compose-ai.yml up -d

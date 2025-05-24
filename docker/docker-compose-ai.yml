@@ -1,18 +1,24 @@
 version: "3.11"
 
 services:
-  vlm:
+  llm:
     image: ghcr.io/ggml-org/llama.cpp:server-cuda
-    container_name: vlm
+    container_name: llm
     ports:
       - "8000:8000"
     volumes:
       - ./volumes/models:/root/.cache/llama.cpp
     command: >
-      -hf ggml-org/SmolVLM2-2.2B-Instruct-GGUF
+      -hf ggml-org/InternVL3-8B-Instruct-GGUF
+      --n-gpu-layers 37
       --port 8000
       --host 0.0.0.0
-      -c 8192
+      -c 32768
+      -n 4096
+      --parallel 4
+      --batch_size 2048
+      --ubatch_size 512
+      --cont-batching
     runtime: nvidia
     deploy:
       resources:
@@ -37,6 +43,7 @@ services:
       - "8001:8000"
     volumes:
       - ./volumes/asr:/root/.cache/huggingface
+      - ./volumes/temp:/temp
     develop:
       watch:
         - path: faster_whisper_server
@@ -58,36 +65,67 @@ services:
     networks:
       - chatbot-video
 
-#  em:
-#    image: ollama/ollama:latest
-#    container_name: em
+#  vlm:
+#    build: ../app/vlm/
+#    container_name: vlm
+#    ports:
+#      - "8002:8000"
 #    volumes:
-#      - ./llm/ollama/em.entrypoint.sh:/root/entrypoint.sh
-#      - ./volumes/llm/models/em:/root/.ollama
-#    environment:
-#      - OLLAMA_HOST=http://0.0.0.0:8000
-#      - OLLAMA_KEEP_ALIVE=-1
-#      - OLLAMA_CONTEXT_LENGTH=8192
-#    entrypoint: ["/bin/sh", "/root/entrypoint.sh"]
+#      - /volumes/vlm:/root/.cache/huggingface
+#      - ./volumes/temp:/temp
 #    runtime: nvidia
 #    deploy:
 #      resources:
 #        reservations:
 #          devices:
-#            - driver: nvidia
-#              count: all
-#              capabilities: [gpu]
-#    pull_policy: always
-#    tty: true
-#    restart: always
-#    profiles:
-#      - llm
+#            - capabilities: [gpu]
+#    restart: unless-stopped
 #    networks:
-#      - llm-lab
+#      - chatbot-video
 
-#  asr:
-#    image: ghcr.io/ggml-org/whisper.cpp:main
-#
+  # Chat UI & Pipeline
+  llm-ui:
+    image: ghcr.io/open-webui/open-webui:main
+    container_name: llm-ui
+    ports:
+      - "3000:3000"
+    environment:
+      - 'PORT=3000'
+      - 'OPENAI_API_BASE_URLS=http://llm:8000/v1;http://llm-ui-pipelines:8000'
+      - 'OPENAI_API_KEYS=12345;0p3n-w3bu!'
+      - 'WEBUI_AUTH=false'
+    restart: unless-stopped
+    volumes:
+      - ./volumes/open-webui:/app/backend/data
+    networks:
+      - chatbot-video
+
+  llm-ui-pipelines:
+    container_name: llm-ui-pipelines
+    image: ghcr.io/open-webui/pipelines:main
+    volumes:
+      - ./volumes/open-webui-pipeline:/app/pipelines
+      - ./llm-ui-pipelines/chat_video.py:/app/pipelines/chat_video.py
+      - ./volumes/temp:/temp
+    restart: always
+    environment:
+      - 'PORT=8000'
+      - 'PIPELINES_API_KEY=0p3n-w3bu!'
+#      - 'PIPELINES_URLS=https://github.com/open-webui/pipelines/blob/main/examples/filters/mem0_memory_filter_pipeline.py'
+    networks:
+      - chatbot-video
+
+  # yt-dlp-server
+  yt-dlp-server:
+    build: ../app/yt-dlp-server/
+    container_name: yt-dlp-server
+    ports:
+      - "9000:8000"
+    volumes:
+      - ./volumes/temp:/temp
+    restart: unless-stopped
+    networks:
+      - chatbot-video
 
 # === Network ===
 networks:

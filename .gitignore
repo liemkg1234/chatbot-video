@@ -21,6 +21,6 @@ uv.lock
 
 # Project
 .env
-demo
 docker/volumes
 logs
+demo

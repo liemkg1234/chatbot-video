@@ -1,82 +1,95 @@
-# 🎥 Video Insight Chatbot
+# 🎥 **Video Insight Chatbot**
 
-A powerful chatbot that allows users to ask questions about the content of a video — whether by uploading a file, providing a YouTube link, or even submitting a screenshot to locate specific moments in the video.
+> *An intelligent chatbot that lets you ask questions about video content — whether by uploading a file, sharing a YouTube link, or even submitting a screenshot to find specific moments.*
+
+
+---
+## Demo
+![Demo](images/demo.gif)
 
 ---
 
-## ✨ Features
 
-- 📹 Upload a YouTube URL.
-- 🔍 Ask natural language questions about video content (speech, scenes, visuals).
-- 🖼️ Submit a screenshot/image and ask it.
-- 🧠 Backed by modern multimodal AI techniques (speech + image + text).
+## ✨ **Features**
+
+* 📹 **YouTube URL Support** — Automatically downloads and processes videos.
+* 🔍 **Ask Natural Language Questions** — About speech, scenes, visuals, and activities.
+* 🧠 **Powered by Multimodal AI** — Combines audio, image, and text understanding.
 
 ---
 
-## 🔄 System Pipeline
+## 🔄 **System Pipeline**
 
 ```mermaid
 graph TD
-    A[User Input: Youtube URL] --> B[Video Downloader and Preprocessing]
-    B --> C[ASR]
-    C --> D[Transcription - chunked]
-    B --> E[Frame Sampling - 1 fps for image search]
+    A[User Input: YouTube URL] --> B[Download Video with yt-dlp]
+    B --> C[Extract Audio]
+    C --> D[ASR to get Chunked Transcription]
+    D --> E[Chunk Video by Transcript Timestamps]
+    E --> F[Feed Chunks to VLM]
 
-    D --> F[Video Chunk Mapping by Timestamp]
-    F --> G[VLM]
-    
-    G --> H[Extracted Visual Information:
+    F --> G[Extracted Visual Info:
         - Caption
-        - Object Detection
+        - Objects
         - OCR
         - Activity
         - Scene
         - Lighting]
-    
-    H --> I[Merge with Transcript Text]
-    I --> J[Embed Text Segments]
-    
-    J --> K[Store in Text Vector DB]
-    E --> L[Embed Sampled Frames]
-    L --> M[Store in Image Vector DB]
-    
-    N[User Input: Question or Image] --> O[Query Processing]
-    
-    O --> P{Image provided?}
-    
-    P -- Yes --> Q1[Embed Query Image]
-    Q1 --> R1[Search in Image Vector DB]
-    R1 --> S1[Map to Timestamp]
-    S1 --> T1[Retrieve Related Text Segments]
 
-    P -- Yes --> Q2[Feed Image to VLM]
-    Q2 --> R2[Extract Visual Text from Image]
-    R2 --> S2[Embed Visual Text]
-    S2 --> T2[Search in Text Vector DB]
+    D --> H[Text Chunks from ASR]
 
-    P -- No --> U[Embed Text Query]
-    U --> V[Search in Text Vector DB]
+    G --> I[Merge Visual Info + Text Chunks]
+    H --> I
 
-    %% Merge logic
-    T1 --> W[Contextual Answer by LLM]
-    T2 --> W
-    V  --> W
-    W --> X[Chatbot Response]
+    I --> J[System Prompt Construction]
 
+    K[User Chat] --> L[Query + System Prompt Context]
+    L --> M[LLM Response]
 ```
 
-## Technologies Used
-- Video Downloader: yt-dlp
-- Transcription (ASR): Whisper.cpp (don't use when have subtitles in video)
-- Image Embedding:
-- Video Analysis: SmolVLM2
-  - Detail Caption
-  - Object Detection
-  - Text in image (OCR)
-  - Actions or activity
-  - Spatial context / scene	
-  - Time / lighting context	
-- Vector Store: Qdrant
-- Contextual Answering: LLM
+---
 
+## 🛠️ **Technologies Used**
 
+* **Video Download**: [`yt-dlp`](https://github.com/yt-dlp/yt-dlp)
+* **Audio Transcription (ASR)**: [`whisper.cpp`](https://github.com/ggerganov/whisper.cpp)
+* **VLM**: [`InternVL3-8B`](https://huggingface.co/OpenGVLab/InternVL3-8B-Instruct)
+
+  * Detailed captions
+  * Object & activity detection
+  * OCR (text in video)
+  * Scene and lighting context
+* **Chat **: **InternVL3-8B**
+
+---
+
+## 🚀 **Getting Started**
+
+### 🔧 Install `just`
+
+```bash
+sudo apt install just
+```
+
+### 📦 Install Dependencies & Download Models
+
+```bash
+just dependency
+just download-model
+```
+
+### ▶️ Run the App
+
+```bash
+just start
+
+# Waiting for model downloading...
+```
+
+### Test
+[localhost:3000](http://localhost:3000)
+
+---
+
+## 📬 **Contact**
+**Email**: [liemkg1234@gmail.com](mailto:liemkg1234@gmail.com)
