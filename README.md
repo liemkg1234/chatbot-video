@@ -5,7 +5,8 @@
 
 ---
 ## Demo
-![Demo](images/demo.gif)
+## 📽 Demo
+[![Demo Video](images/demo.png)](https://youtu.be/d9r8VSMw26g)
 
 ---
 
