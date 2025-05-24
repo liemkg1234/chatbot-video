@@ -57,12 +57,12 @@ graph TD
 * **Video Download**: [`yt-dlp`](https://github.com/yt-dlp/yt-dlp)
 * **Audio Transcription (ASR)**: [`whisper.cpp`](https://github.com/ggerganov/whisper.cpp)
 * **VLM**: [`InternVL3-8B`](https://huggingface.co/OpenGVLab/InternVL3-8B-Instruct)
-
   * Detailed captions
   * Object & activity detection
   * OCR (text in video)
   * Scene and lighting context
-* **Chat **: **InternVL3-8B**
+* **Chat**: InternVL3-8B
+* **Chatbot WebUI**: [`OpenWeb UI`](https://github.com/open-webui/open-webui)
 
 ---
 
