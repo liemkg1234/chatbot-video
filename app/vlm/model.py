@@ -34,3 +34,4 @@ def describe_video(video_path: str, user_prompt: str = "Describe this video.") -
 
     generated_texts = processor.batch_decode(generated_ids, skip_special_tokens=True)
     return generated_texts[0]
+
